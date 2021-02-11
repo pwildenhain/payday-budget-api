@@ -18,14 +18,14 @@ def create_transaction(db: Session, transaction: schemas.TransactionCreate):
     db.commit()
     db.refresh(db_transaction)
     # Update account balance to reflect transaction
-    update_account_balance(db, db_transaction.name)
+    update_account_balance(db, db_transaction)
     return db_transaction
 
-def update_account_balance(db: Session, account_name: str):
-    account_transactions = db.query(models.Transaction.amount, models.Transaction.transaction_type).filter(models.Transaction.name == account_name).all()
-    account_balance = sum([amount if tx_type == "credit" else -amount for amount, tx_type in account_transactions])
-    db_account = db.query(models.Account).filter(models.Account.name == account_name).first()
-    db_account.current_balance = account_balance
+def update_account_balance(db: Session, transaction: models.Transaction):
+    db_account = db.query(models.Account).filter(models.Account.name == transaction.name).first()
+    tx_amount = transaction.amount if transaction.transaction_type == "credit" else -transaction.amount
+    new_balance = db_account.current_balance + tx_amount
+    db_account.current_balance = new_balance
     db.commit()
     db.refresh(db_account)
     return db_account
