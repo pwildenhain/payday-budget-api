@@ -1,0 +1,20 @@
+<table class="table table-striped">
+    <thead>
+        <tr>
+        <th scope="col">Category</th>
+        <th scope="col">Name</th>
+        <th scope="col">Budgeted Amount</th>
+        <th scope="col">Current Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for account in accounts %}
+        <tr>
+            <td>{{ account.category }}</td>
+            <td>{{ account.name }}</td>
+            <td>{{ account.budgeted_amount }}</td>
+            <td>{{ account.current_balance }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

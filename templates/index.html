@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col">
+            {% include 'get_accounts.html' %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
