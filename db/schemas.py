@@ -1,3 +1,4 @@
+import datetime
 from enum import Enum
 from typing import List
 
@@ -9,7 +10,7 @@ class TransactionType(str, Enum):
 
 
 class TransactionBase(BaseModel):
-    date: str
+    date: datetime.datetime
     name: str
     comment: str
     transaction_type: TransactionType
