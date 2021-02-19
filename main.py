@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from fastapi import Depends, FastAPI, Form, Request
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
@@ -14,6 +15,8 @@ from db.database import SessionLocal, engine
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Dependency
 def get_db():
@@ -35,10 +38,11 @@ def root(request: Request, db: Session = Depends(get_db)):
     )
 
 @app.get("/add-transaction", response_class=HTMLResponse, include_in_schema=False)
-def add_transaction_view(request: Request):
+def add_transaction_view(request: Request, db: Session = Depends(get_db)):
+    accounts = get_accounts(db)
     return templates.TemplateResponse(
         "add_transaction.html",
-        {"request": request}
+        {"request": request, "accounts": accounts}
     )
 
 # endpoints

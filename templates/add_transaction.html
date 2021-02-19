@@ -1,21 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<form action="{{ url_for('add_transaction_form') }}" method="post" class="form-add-tx">
-    <div class="form-add-tx">
-        <label for="name">Account Name: </label>
-        <input type="text" name="account_name" id="account_name" required>
-    </div>
-    <div class="form-add-tx">
-        <label for="amount">Amount: </label>
-        <input type="number" name="amount" id="amount" required>
-     </div>
-    <div class="form-add-tx">
-        <label for="comment">Comment: </label>
-        <input type="text" name="comment" id="comment">
-    </div>
-    <div class="form-add-tx">
-      <input type="submit" value="Submit">
-    </div>
-</form>
+<div class="container my-4">
+    <form action="{{ url_for('add_transaction_form') }}" method="post" class="form-add-tx">
+        <!-- Grid row -->
+        <div class="form-row">
+          <!-- Grid column -->
+          <div class="col-md-6">
+            <!-- Material input -->
+            <div class="md-form form-group form-add-tx">
+              <label for="account_name">Account Name</label>
+              <select class="form-control" name="account_name" id="account_name">
+                {% for account in accounts %}
+                <option>{{ account.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <!-- Grid column -->
+    
+          <!-- Grid column -->
+          <div class="col-md-6">
+            <!-- Material input -->
+            <div class="md-form form-group form-add-tx">
+              <label for="amount">Amount</label>
+              <input class="form-control" type="number" name="amount" id="amount" required >
+            </div>
+          </div>
+          <!-- Grid column -->
+    
+        </div>
+        <!-- Grid row -->
+    
+        <!-- Grid row -->
+        <div class="form-row">
+          <!-- Grid column -->
+          <div class="col-md-6">
+            <!-- Material input -->
+            <div class="md-form form-group form-add-tx">
+              <label for="comment">Comment</label>
+              <input type="text" class="form-control" id="comment" name="comment">
+            </div>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+        <br />
+        <button type="submit" class="btn btn-primary btn-md">Submit</button>
+      </form>
+      <!-- Extended material form grid -->
+
+</div>
 {% endblock content %}
