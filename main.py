@@ -45,6 +45,14 @@ def add_transaction_view(request: Request, db: Session = Depends(get_db)):
         {"request": request, "accounts": accounts}
     )
 
+@app.get("/record-payday", response_class=HTMLResponse, include_in_schema=False)
+def record_payday_view(request: Request):
+    return templates.TemplateResponse(
+        "record_payday.html",
+        {"request": request}
+    )
+
+
 # endpoints
 @app.get("/accounts", response_model=List[schemas.Account])
 def get_accounts(db: Session = Depends(get_db)):

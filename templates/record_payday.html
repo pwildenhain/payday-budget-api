@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="text-align: center;">
+    {% set home_page = url_for('root') %}
+    <h2>Are you sure you would like to record a payday?</h2>
+    <button type="button" class="btn btn-primary btn-lg" onclick="playAudioAndRedirect('static/audio/chaching.mp3', '{{ home_page }}', 2500)">Yes</button>
+    <button type="button" class="btn btn-secondary btn-lg" onclick="location.href='{{ home_page }}'">No</button>
+</div>
+{% endblock content %}
