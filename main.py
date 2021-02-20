@@ -28,18 +28,43 @@ def get_db():
 
 
 templates = Jinja2Templates(directory="templates")
+
+
+# endpoints
+@app.get("/accounts", response_model=List[schemas.Account])
+def get_accounts(db: Session = Depends(get_db)):
+    return crud.get_accounts(db)
+
+@app.post("/transactions", response_model=schemas.Transaction)
+def add_transaction(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
+    return crud.create_transaction(db, transaction)
+
+@app.post("/payday", response_model=List[schemas.Transaction])
+def record_payday(db: Session = Depends(get_db), accounts: List[schemas.Account] = Depends(get_accounts)):
+    transaction_list = []
+    for account in accounts:
+        transaction = schemas.TransactionCreate(
+            name=account.name,
+            amount=account.budgeted_amount,
+            comment="payday",
+            transaction_type="credit",
+            date=datetime.datetime.now()
+        )
+
+        transaction_list += [add_transaction(transaction, db)]
+
+    return transaction_list
+
 # views
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
-def root(request: Request, db: Session = Depends(get_db)):
-    accounts = get_accounts(db)
+def root(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
     return templates.TemplateResponse(
         "index.html",
         {"request": request, "accounts": accounts}
     )
 
 @app.get("/add-transaction", response_class=HTMLResponse, include_in_schema=False)
-def add_transaction_view(request: Request, db: Session = Depends(get_db)):
-    accounts = get_accounts(db)
+def add_transaction_view(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
     return templates.TemplateResponse(
         "add_transaction.html",
         {"request": request, "accounts": accounts}
@@ -52,17 +77,7 @@ def record_payday_view(request: Request):
         {"request": request}
     )
 
-
-# endpoints
-@app.get("/accounts", response_model=List[schemas.Account])
-def get_accounts(db: Session = Depends(get_db)):
-    return crud.get_accounts(db)
-
-@app.post("/transactions", response_model=schemas.Transaction)
-def add_transaction(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
-    return crud.create_transaction(db, transaction)
-
-# forms
+# forms/redirect
 @app.post("/add-transaction-form", response_class=RedirectResponse, include_in_schema=False)
 def add_transaction_form(
     account_name: str = Form(...),
@@ -83,3 +98,7 @@ def add_transaction_form(
     add_transaction(transaction, db)
 
     return RedirectResponse(url="/add-transaction", status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/payday-redirect", response_class=RedirectResponse, include_in_schema=False)
+def payday_form(payday: List[schemas.Transaction] = Depends(record_payday)):
+    return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)

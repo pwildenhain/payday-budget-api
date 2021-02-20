@@ -3,8 +3,12 @@
 {% block content %}
 <div style="text-align: center;">
     {% set home_page = url_for('root') %}
+    {% set payday_form = url_for('payday_form') %}
+    <audio id="chaching" src="/static/audio/chaching.mp3" type="audio/mpeg"></audio>
     <h2>Are you sure you would like to record a payday?</h2>
-    <button type="button" class="btn btn-primary btn-lg" onclick="playAudioAndRedirect('static/audio/chaching.mp3', '{{ home_page }}', 2500)">Yes</button>
+    <form action="{{ payday_form }}" method="post" onsubmit="playAudio()">
+        <button type="submit" class="btn btn-primary btn-lg">Yes</button>
+    </form>
     <button type="button" class="btn btn-secondary btn-lg" onclick="location.href='{{ home_page }}'">No</button>
 </div>
 {% endblock content %}
