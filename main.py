@@ -77,6 +77,13 @@ def add_income_view(request: Request, accounts: List[schemas.Account] = Depends(
         {"request": request, "accounts": accounts}
     )
 
+@app.get("/transfer", response_class=HTMLResponse, include_in_schema=False)
+def transfer_view(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
+    return templates.TemplateResponse(
+        "transfer.html",
+        {"request": request, "accounts": accounts}
+    )
+
 @app.get("/record-payday", response_class=HTMLResponse, include_in_schema=False)
 def record_payday_view(request: Request):
     return templates.TemplateResponse(
@@ -124,6 +131,36 @@ def add_income_form(
     )
 
     add_transaction(transaction, db)
+
+    return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
+
+@app.post("/transfer-form", response_class=RedirectResponse, include_in_schema=False)
+def transfer_form(
+    from_account: str = Form(...),
+    to_account: str = Form(...),
+    amount: int = Form(...),
+    date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
+    db: Session = Depends(get_db)
+):
+    account_withdraw_transaction = schemas.TransactionCreate(
+        name=from_account,
+        amount=amount,
+        comment=f"Transfer to {to_account}",
+        transaction_type="debit",
+        date=date
+    )
+
+    add_transaction(account_withdraw_transaction, db)
+
+    account_deposit_transaction = schemas.TransactionCreate(
+        name=to_account,
+        amount=amount,
+        comment=f"Transfer from {from_account}",
+        transaction_type="credit",
+        date=date
+    )
+
+    add_transaction(account_deposit_transaction, db)
 
     return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
