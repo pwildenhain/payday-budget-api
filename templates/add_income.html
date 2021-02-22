@@ -1,6 +1,5 @@
 {% extends 'add_transaction.html' %}
 
-{% block endpoint scoped %}
-{% set form_endpoint = url_for('add_income_form') %}
-<form action="{{ form_endpoint }}" method="post" class="form-add-tx">
+{% block endpoint %}
+<form action="{{ url_for('add_income_form') }}" method="post" class="form-add-tx">
 {% endblock endpoint %}

@@ -3,8 +3,7 @@
 {% block content %}
 <div class="container my-4">
   {% block endpoint %}
-  {% set form_endpoint = url_for('add_transaction_form') %}
-  <form action="{{ form_endpoint }}" method="post" class="form-add-tx">
+  <form action="{{ url_for('add_transaction_form') }}" method="post" class="form-add-tx">
   {% endblock endpoint %}
         <!-- Grid row -->
         <div class="form-row">
