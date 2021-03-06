@@ -26,6 +26,12 @@ def get_db():
     finally:
         db.close()
 
+import logging
+
+logging.basicConfig(
+    format="%(asctime)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S", level=logging.INFO
+)
+
 
 templates = Jinja2Templates(directory="templates")
 
@@ -40,6 +46,7 @@ def get_accounts(db: Session = Depends(get_db)):
 def add_transaction(
     transaction: schemas.TransactionCreate, db: Session = Depends(get_db)
 ):
+    logging.info(f"add_transaction -- {transaction.amount=}")
     return crud.create_transaction(db, transaction)
 
 
@@ -115,6 +122,7 @@ def add_transaction_form(
     date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
     db: Session = Depends(get_db),
 ):
+    logging.info(f"add_transaction_form -- {amount=}")
     transaction = schemas.TransactionCreate(
         name=account_name,
         amount=amount,
@@ -122,7 +130,7 @@ def add_transaction_form(
         transaction_type=transaction_type,
         date=date,
     )
-
+    logging.info(f"add_transaction_form -- {transaction.amount=}")
     add_transaction(transaction, db)
 
     return RedirectResponse(url="/add-transaction", status_code=HTTP_303_SEE_OTHER)
