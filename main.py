@@ -35,12 +35,19 @@ templates = Jinja2Templates(directory="templates")
 def get_accounts(db: Session = Depends(get_db)):
     return crud.get_accounts(db)
 
+
 @app.post("/transactions", response_model=schemas.Transaction)
-def add_transaction(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
+def add_transaction(
+    transaction: schemas.TransactionCreate, db: Session = Depends(get_db)
+):
     return crud.create_transaction(db, transaction)
 
+
 @app.post("/payday", response_model=List[schemas.Transaction])
-def record_payday(db: Session = Depends(get_db), accounts: List[schemas.Account] = Depends(get_accounts)):
+def record_payday(
+    db: Session = Depends(get_db),
+    accounts: List[schemas.Account] = Depends(get_accounts),
+):
     transaction_list = []
     for account in accounts:
         transaction = schemas.TransactionCreate(
@@ -48,70 +55,78 @@ def record_payday(db: Session = Depends(get_db), accounts: List[schemas.Account]
             amount=account.budgeted_amount,
             comment="payday",
             transaction_type="credit",
-            date=datetime.datetime.now()
+            date=datetime.datetime.now(),
         )
 
         transaction_list += [add_transaction(transaction, db)]
 
     return transaction_list
 
+
 # views
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 def root(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
     return templates.TemplateResponse(
-        "index.html",
-        {"request": request, "accounts": accounts}
+        "index.html", {"request": request, "accounts": accounts}
     )
+
 
 @app.get("/add-transaction", response_class=HTMLResponse, include_in_schema=False)
-def add_transaction_view(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
+def add_transaction_view(
+    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+):
     return templates.TemplateResponse(
-        "add_transaction.html",
-        {"request": request, "accounts": accounts}
+        "add_transaction.html", {"request": request, "accounts": accounts}
     )
+
 
 @app.get("/add-income", response_class=HTMLResponse, include_in_schema=False)
-def add_income_view(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
+def add_income_view(
+    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+):
     return templates.TemplateResponse(
-        "add_income.html",
-        {"request": request, "accounts": accounts}
+        "add_income.html", {"request": request, "accounts": accounts}
     )
 
+
 @app.get("/transfer", response_class=HTMLResponse, include_in_schema=False)
-def transfer_view(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
+def transfer_view(
+    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+):
     return templates.TemplateResponse(
-        "transfer.html",
-        {"request": request, "accounts": accounts}
+        "transfer.html", {"request": request, "accounts": accounts}
     )
+
 
 @app.get("/record-payday", response_class=HTMLResponse, include_in_schema=False)
 def record_payday_view(request: Request):
-    return templates.TemplateResponse(
-        "record_payday.html",
-        {"request": request}
-    )
+    return templates.TemplateResponse("record_payday.html", {"request": request})
+
 
 # forms/redirect
-@app.post("/add-transaction-form", response_class=RedirectResponse, include_in_schema=False)
+@app.post(
+    "/add-transaction-form", response_class=RedirectResponse, include_in_schema=False
+)
 def add_transaction_form(
     account_name: str = Form(...),
     amount: int = Form(...),
     comment: Optional[str] = Form(""),
     transaction_type: Optional[str] = Form("debit"),
     date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     transaction = schemas.TransactionCreate(
         name=account_name,
         amount=amount,
         comment=comment,
         transaction_type=transaction_type,
-        date=date
+        date=date,
     )
 
     add_transaction(transaction, db)
 
     return RedirectResponse(url="/add-transaction", status_code=HTTP_303_SEE_OTHER)
+
 
 @app.post("/add-income-form", response_class=RedirectResponse, include_in_schema=False)
 def add_income_form(
@@ -120,19 +135,20 @@ def add_income_form(
     comment: Optional[str] = Form(""),
     transaction_type: Optional[str] = Form("credit"),
     date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     transaction = schemas.TransactionCreate(
         name=account_name,
         amount=amount,
         comment=comment,
         transaction_type=transaction_type,
-        date=date
+        date=date,
     )
 
     add_transaction(transaction, db)
 
     return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
+
 
 @app.post("/transfer-form", response_class=RedirectResponse, include_in_schema=False)
 def transfer_form(
@@ -140,14 +156,14 @@ def transfer_form(
     to_account: str = Form(...),
     amount: int = Form(...),
     date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     account_withdraw_transaction = schemas.TransactionCreate(
         name=from_account,
         amount=amount,
         comment=f"Transfer to {to_account}",
         transaction_type="debit",
-        date=date
+        date=date,
     )
 
     add_transaction(account_withdraw_transaction, db)
@@ -157,12 +173,13 @@ def transfer_form(
         amount=amount,
         comment=f"Transfer from {from_account}",
         transaction_type="credit",
-        date=date
+        date=date,
     )
 
     add_transaction(account_deposit_transaction, db)
 
     return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
+
 
 @app.post("/payday-redirect", response_class=RedirectResponse, include_in_schema=False)
 def payday_form(payday: List[schemas.Transaction] = Depends(record_payday)):

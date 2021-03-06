@@ -4,6 +4,7 @@ from typing import List
 
 from pydantic import BaseModel
 
+
 class TransactionType(str, Enum):
     credit = "credit"
     debit = "debit"
@@ -22,7 +23,6 @@ class TransactionCreate(TransactionBase):
 
 
 class Transaction(TransactionBase):
-
     class Config:
         orm_mode = True
 
@@ -39,7 +39,7 @@ class AccountCreate(AccountBase):
 
 
 class Account(AccountBase):
-    #transactions: List[Transaction]
+    # transactions: List[Transaction]
 
     class Config:
         orm_mode = True
