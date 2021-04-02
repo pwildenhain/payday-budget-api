@@ -42,6 +42,11 @@ def get_accounts(db: Session = Depends(get_db)):
     return crud.get_accounts(db)
 
 
+@app.post("/accounts", response_model=schemas.Account)
+def add_account(account: schemas.AccountCreate, db: Session = Depends(get_db)):
+    return crud.create_account(db, account)
+
+
 @app.post("/transactions", response_model=schemas.Transaction)
 def add_transaction(
     transaction: schemas.TransactionCreate, db: Session = Depends(get_db)
@@ -58,7 +63,7 @@ def record_payday(
     transaction_list = []
     for account in accounts:
         transaction = schemas.TransactionCreate(
-            name=account.name,
+            account_id=account.account_id,
             amount=account.budgeted_amount,
             comment="payday",
             transaction_type="credit",
@@ -115,20 +120,19 @@ def record_payday_view(request: Request):
     "/add-transaction-form", response_class=RedirectResponse, include_in_schema=False
 )
 def add_transaction_form(
-    account_name: str = Form(...),
+    account_id: int = Form(...),
     amount: int = Form(...),
     comment: Optional[str] = Form(""),
     transaction_type: Optional[str] = Form("debit"),
-    date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
     db: Session = Depends(get_db),
 ):
     logging.info(f"add_transaction_form -- {amount=}")
     transaction = schemas.TransactionCreate(
-        name=account_name,
+        account_id=account_id,
         amount=amount,
         comment=comment,
         transaction_type=transaction_type,
-        date=date,
+        date=datetime.datetime.now(),
     )
     logging.info(f"add_transaction_form -- {transaction.amount=}")
     add_transaction(transaction, db)
@@ -138,19 +142,18 @@ def add_transaction_form(
 
 @app.post("/add-income-form", response_class=RedirectResponse, include_in_schema=False)
 def add_income_form(
-    account_name: str = Form(...),
+    account_id: str = Form(...),
     amount: int = Form(...),
     comment: Optional[str] = Form(""),
     transaction_type: Optional[str] = Form("credit"),
-    date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
     db: Session = Depends(get_db),
 ):
     transaction = schemas.TransactionCreate(
-        name=account_name,
+        account_id=account_id,
         amount=amount,
         comment=comment,
         transaction_type=transaction_type,
-        date=date,
+        date=datetime.datetime.now(),
     )
 
     add_transaction(transaction, db)
@@ -160,28 +163,27 @@ def add_income_form(
 
 @app.post("/transfer-form", response_class=RedirectResponse, include_in_schema=False)
 def transfer_form(
-    from_account: str = Form(...),
-    to_account: str = Form(...),
+    from_account_id: int = Form(...),
+    to_account_id: int = Form(...),
     amount: int = Form(...),
-    date: Optional[datetime.datetime] = Form(datetime.datetime.now()),
     db: Session = Depends(get_db),
 ):
     account_withdraw_transaction = schemas.TransactionCreate(
-        name=from_account,
+        account_id=from_account_id,
         amount=amount,
-        comment=f"Transfer to {to_account}",
+        comment=f"Transfer to {from_account_id}",
         transaction_type="debit",
-        date=date,
+        date=datetime.datetime.now(),
     )
 
     add_transaction(account_withdraw_transaction, db)
 
     account_deposit_transaction = schemas.TransactionCreate(
-        name=to_account,
+        account_id=to_account_id,
         amount=amount,
-        comment=f"Transfer from {from_account}",
+        comment=f"Transfer from {to_account_id}",
         transaction_type="credit",
-        date=date,
+        date=datetime.datetime.now(),
     )
 
     add_transaction(account_deposit_transaction, db)
