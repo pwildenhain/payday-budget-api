@@ -5,9 +5,10 @@ from .database import Base
 
 
 class Account(Base):
-    __tablename__ = "budget_summary"
+    __tablename__ = "accounts"
 
-    name = Column(String, primary_key=True, index=True)
+    account_id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String)
     category = Column(String)
     budgeted_amount = Column(Integer)
     current_balance = Column(Integer)
@@ -16,10 +17,11 @@ class Account(Base):
 
 
 class Transaction(Base):
-    __tablename__ = "transaction_history"
+    __tablename__ = "transactions"
 
-    date = Column(String, primary_key=True)
-    name = Column(String, ForeignKey("budget_summary.name"), primary_key=True)
+    transaction_id = Column(Integer, primary_key=True, autoincrement=True)
+    date = Column(String)
+    account_id = Column(Integer, ForeignKey("accounts.account_id"))
     comment = Column(String)
     transaction_type = Column(String)
     amount = Column(Integer)
