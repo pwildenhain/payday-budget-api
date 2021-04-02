@@ -12,7 +12,7 @@ class TransactionType(str, Enum):
 
 class TransactionBase(BaseModel):
     date: datetime.datetime
-    name: str
+    account_id: int
     comment: str
     transaction_type: TransactionType
     amount: int
@@ -23,6 +23,7 @@ class TransactionCreate(TransactionBase):
 
 
 class Transaction(TransactionBase):
+    transaction_id: int
     class Config:
         orm_mode = True
 
@@ -39,7 +40,7 @@ class AccountCreate(AccountBase):
 
 
 class Account(AccountBase):
-    # transactions: List[Transaction]
+    account_id: int
 
     class Config:
         orm_mode = True
