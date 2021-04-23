@@ -15,9 +15,19 @@ def get_accounts(db: Session = Depends(get_db)):
     return crud.get_accounts(db)
 
 
+@router.get("/accounts/{account_id}", response_model=schemas.Account)
+def get_account(account_id: int, db: Session = Depends(get_db)):
+    return crud.get_account(db, account_id)
+
+
 @router.post("/accounts", response_model=schemas.Account)
 def add_account(account: schemas.AccountCreate, db: Session = Depends(get_db)):
     return crud.create_account(db, account)
+
+
+@router.put("/accounts/{account_id}", response_model=schemas.Account)
+def update_account(account_id: int, account: schemas.AccountUpdate, db: Session = Depends(get_db)):
+    return crud.update_account(db, account_id, account)
 
 
 @router.post("/transactions", response_model=schemas.Transaction)

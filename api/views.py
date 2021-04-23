@@ -49,3 +49,12 @@ def transfer_view(
 @router.get("/record-payday", response_class=HTMLResponse, include_in_schema=False)
 def record_payday_view(request: Request):
     return templates.TemplateResponse("record_payday.html", {"request": request})
+
+
+@router.get("/modify-account", response_class=HTMLResponse, include_in_schema=False)
+def modify_account_view(
+    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+):
+    return templates.TemplateResponse(
+        "modify_account.html", {"request": request, "accounts": accounts}
+    )

@@ -39,6 +39,13 @@ class AccountCreate(AccountBase):
     pass
 
 
+class AccountUpdate(AccountBase):
+    pass
+
+    class Config:
+        orm_mode = True
+
+
 class Account(AccountBase):
     account_id: int
 

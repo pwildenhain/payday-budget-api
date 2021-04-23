@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from db import schemas
 from api.dependencies import get_db
-from api.api import add_transaction, record_payday
+from api.api import add_transaction, get_account, record_payday, update_account
 
 # no prefix here, since we want to redirect the user back to the home page
 router = APIRouter()
@@ -94,4 +94,29 @@ def transfer_form(
 @router.post("/form/payday", response_class=RedirectResponse, include_in_schema=False)
 def payday_form(payday: List[schemas.Transaction] = Depends(record_payday)):
     # By adding the record_payday dependency, we're implicitly recording a payday
+    return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
+
+
+@router.post(
+    "/form/modify-account", response_class=RedirectResponse, include_in_schema=False
+)
+def modify_account_form(
+    account_id: int = Form(...),
+    budgeted_amount: int = Form(...),
+    db: Session = Depends(get_db),
+):
+    account = get_account(account_id, db)
+    account.budgeted_amount = budgeted_amount
+
+    update_account(
+        account_id,
+        schemas.AccountUpdate(
+            name=account.name,
+            category=account.category,
+            budgeted_amount=account.budgeted_amount,
+            current_balance=account.current_balance,
+        ),
+        db,
+    )
+
     return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
