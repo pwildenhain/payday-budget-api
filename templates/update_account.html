@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
-{% set active_page = 'modify_account_view' %}
+{% set active_page = 'update_account_view' %}
 
 {% block content %}
 <div class="container my-4">
-    <form action="{{ url_for('modify_account_form') }}" method="post" class="form-modify-account">
+    <form action="{{ url_for('update_account_form') }}" method="post" class="form-update-account">
           <!-- Grid row -->
           <div class="form-row">
             <!-- Grid column -->
             <div class="col-md-6">
               <!-- Material input -->
-              <div class="md-form form-group form-modify-account">
+              <div class="md-form form-group form-update-account">
                 <label for="account_id">Select Account</label>
                 <select class="form-control" name="account_id" id="account_id">
                   {% for account in accounts %}
@@ -23,7 +23,7 @@
             <!-- Grid column -->
             <div class="col-md-6">
               <!-- Material input -->
-              <div class="md-form form-group form-modify-account">
+              <div class="md-form form-group form-update-account">
                 <label for="budgeted_amount">Budgeted Amount</label>
                 <input class="form-control" type="number" name="budgeted_amount" id="budgeted_amount" required >
               </div>
