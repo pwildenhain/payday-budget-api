@@ -139,3 +139,5 @@ cython_debug/
 
 # db files
 db/payday_budget*.db
+db/budget.db
+
