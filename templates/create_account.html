@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% set active_page = 'modify_account_view' %}
+
+{% block content %}
+<div class="container my-4">
+    <form action="{{ url_for('create_account_form') }}" method="post" class="form-account">
+          <!-- Grid row -->
+          <div class="form-row">            
+            <!-- Grid column -->
+            <div class="col-md-6">
+              <!-- Material input -->
+              <div class="md-form form-group form-account">
+                <label for="account_name">Account Name</label>
+                <input class="form-control" type="text" name="account_name" id="account_name" required >
+              </div>
+            </div>
+            <!-- Grid column -->
+
+            <!-- Grid column -->
+            <div class="col-md-6">
+                <!-- Material input -->
+                <div class="md-form form-group form-account">
+                  <label for="account_category">Account Category</label>
+                  <input class="form-control" type="text" name="account_category" id="account_category" required >
+                </div>
+            </div>
+            <!-- Grid column -->
+
+            <!-- Grid column -->
+            {% include 'account_inputs/account_budgeted_amount.html' %}
+            <!-- Grid column -->
+
+            <!-- Grid column -->
+            <div class="col-md-6">
+              <!-- Material input -->
+              <div class="md-form form-group form-account">
+                  <label for="current_balance">Current Balance</label>
+                  <input class="form-control" type="number" name="current_balance" id="current_balance" required >
+              </div>
+            </div>
+            <!-- Grid column -->
+          </div>
+          <!-- Grid row -->
+  
+          <br />
+          <button type="submit" class="btn btn-primary btn-md">Submit</button>
+        </form>
+        <!-- Extended material form grid -->
+  
+  </div>
+{% endblock content %}
