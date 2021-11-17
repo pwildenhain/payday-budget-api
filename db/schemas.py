@@ -1,6 +1,5 @@
 import datetime
 from enum import Enum
-from typing import List
 
 from pydantic import BaseModel
 
@@ -44,6 +43,13 @@ class AccountCreate(AccountBase):
 
 class AccountUpdate(AccountBase):
     pass
+
+    class Config:
+        orm_mode = True
+
+
+class AccountDelete(BaseModel):
+    account_id: int
 
     class Config:
         orm_mode = True

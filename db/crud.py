@@ -47,7 +47,7 @@ def update_account(db: Session, account_id: int, account: schemas.AccountUpdate)
         .update({models.Account.budgeted_amount: account.budgeted_amount})
     )
     db.commit()
-    db_account = db.query(models.Account).get(account_id)
+    db_account = get_account(db, account_id)
     db.refresh(db_account)
     return db_account
 
@@ -63,4 +63,11 @@ def update_account_balance(db: Session, transaction: models.Transaction):
     db_account.current_balance = new_balance
     db.commit()
     db.refresh(db_account)
+    return db_account
+
+
+def delete_account(db: Session, account: schemas.AccountDelete):
+    db_account = get_account(db, account.account_id)
+    db.delete(db_account)
+    db.commit()
     return db_account

@@ -51,7 +51,7 @@ def record_payday_view(request: Request):
     return templates.TemplateResponse("record_payday.html", {"request": request})
 
 
-@router.get("/update-account", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/modify/update-account", response_class=HTMLResponse, include_in_schema=False)
 def update_account_view(
     request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
 ):
@@ -59,6 +59,15 @@ def update_account_view(
         "update_account.html", {"request": request, "accounts": accounts}
     )
 
-@router.get("/create-account", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/modify/create-account", response_class=HTMLResponse, include_in_schema=False)
 def create_account_view(request: Request):
     return templates.TemplateResponse("create_account.html", {"request": request})
+
+
+@router.get("/modify/delete-account", response_class=HTMLResponse, include_in_schema=False)
+def delete_account_view(
+    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+):
+    return templates.TemplateResponse(
+        "delete_account.html", {"request": request, "accounts": accounts}
+    )

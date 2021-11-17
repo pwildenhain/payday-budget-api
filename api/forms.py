@@ -11,6 +11,7 @@ from api.dependencies import get_db
 from api.api import (
     add_account,
     add_transaction,
+    delete_account,
     get_account,
     get_accounts,
     record_payday,
@@ -105,7 +106,7 @@ def payday_form(payday: List[schemas.Transaction] = Depends(record_payday)):
 
 
 @router.post(
-    "/form/update-account", response_class=RedirectResponse, include_in_schema=False
+    "/form/modify/update-account", response_class=RedirectResponse, include_in_schema=False
 )
 def update_account_form(
     account_id: int = Form(...),
@@ -130,7 +131,7 @@ def update_account_form(
 
 
 @router.post(
-    "/form/create-account", response_class=RedirectResponse, include_in_schema=False
+    "/form/modify/create-account", response_class=RedirectResponse, include_in_schema=False
 )
 def create_account_form(
     account_name: str = Form(...),
@@ -154,5 +155,22 @@ def create_account_form(
             ),
             db,
         )
+
+    return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
+
+@router.post(
+    "/form/modify/delete-account", response_class=RedirectResponse, include_in_schema=False
+)
+def delete_account_form(
+    account_id: int = Form(...),
+    db: Session = Depends(get_db),
+):
+
+    delete_account(
+        schemas.AccountDelete(
+            account_id=account_id
+        ),
+        db,
+    )
 
     return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
