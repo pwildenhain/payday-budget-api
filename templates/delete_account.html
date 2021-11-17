@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% import 'account_inputs/macros.html' as macros %}
+{% set active_page = active_page|default('modify_account_view' ) %}
+
+{% block content %}
+<div class="container my-4">
+    <form action="{{ url_for('delete_account_form') }}" method="post" class="form-account">
+        <!-- Grid row -->
+        <div class="form-row">
+            <!-- Grid column -->
+            {{ macros.account_names(accounts) }}
+            <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+
+        <br />
+        <button type="submit" class="btn btn-primary btn-md">Submit</button>
+      </form>
+      <!-- Extended material form grid -->
+
+</div>
+{% endblock content %}
