@@ -98,9 +98,9 @@ def payday_form(payday: List[schemas.Transaction] = Depends(record_payday)):
 
 
 @router.post(
-    "/form/modify-account", response_class=RedirectResponse, include_in_schema=False
+    "/form/update-account", response_class=RedirectResponse, include_in_schema=False
 )
-def modify_account_form(
+def update_account_form(
     account_id: int = Form(...),
     budgeted_amount: int = Form(...),
     db: Session = Depends(get_db),
