@@ -38,6 +38,9 @@ class AccountBase(BaseModel):
 class AccountCreate(AccountBase):
     pass
 
+    class Config:
+        orm_mode = True
+
 
 class AccountUpdate(AccountBase):
     pass
