@@ -58,3 +58,7 @@ def update_account_view(
     return templates.TemplateResponse(
         "update_account.html", {"request": request, "accounts": accounts}
     )
+
+@router.get("/create-account", response_class=HTMLResponse, include_in_schema=False)
+def create_account_view(request: Request):
+    return templates.TemplateResponse("create_account.html", {"request": request})

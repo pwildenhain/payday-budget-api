@@ -8,7 +8,14 @@ from sqlalchemy.orm import Session
 
 from db import schemas
 from api.dependencies import get_db
-from api.api import add_transaction, get_account, record_payday, update_account
+from api.api import (
+    add_account,
+    add_transaction,
+    get_account,
+    get_accounts,
+    record_payday,
+    update_account,
+)
 
 # no prefix here, since we want to redirect the user back to the home page
 router = APIRouter()
@@ -118,5 +125,34 @@ def update_account_form(
         ),
         db,
     )
+
+    return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
+
+
+@router.post(
+    "/form/create-account", response_class=RedirectResponse, include_in_schema=False
+)
+def create_account_form(
+    account_name: str = Form(...),
+    account_category: str = Form(...),
+    budgeted_amount: int = Form(...),
+    current_balance: int = Form(...),
+    db: Session = Depends(get_db),
+):
+
+    account_names = [account.name for account in get_accounts(db)]
+
+    # only create the account if it has a unique name
+    # there is def a more elegant solution than this
+    if account_name not in account_names:
+        add_account(
+            schemas.AccountCreate(
+                name=account_name,
+                category=account_category,
+                budgeted_amount=budgeted_amount,
+                current_balance=current_balance,
+            ),
+            db,
+        )
 
     return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
