@@ -26,7 +26,9 @@ def get_account(account_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/accounts/{account_id}", response_model=schemas.Account)
-def update_account(account_id: int, account: schemas.AccountUpdate, db: Session = Depends(get_db)):
+def update_account(
+    account_id: int, account: schemas.AccountUpdate, db: Session = Depends(get_db)
+):
     return crud.update_account(db, account_id, account)
 
 
