@@ -1,29 +1,62 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
+from datetime import datetime
+from enum import Enum
+from typing import Optional, List
 
-from .database import Base
+from sqlmodel import SQLModel, Field, Relationship
 
 
-class Account(Base):
+class AccountBase(SQLModel):
+    name: str
+    category: str
+    budgeted_amount: int
+    current_balance: int
+
+
+class AccountCreate(AccountBase):
+    pass
+
+
+class AccountUpdate(AccountBase):
+    account_id: int
+
+
+class AccountDelete(AccountBase):
+    account_id: int
+
+
+class AccountRead(AccountBase):
+    account_id: int
+
+
+class Account(AccountBase, table=True):
     __tablename__ = "accounts"
 
-    account_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String)
-    category = Column(String)
-    budgeted_amount = Column(Integer)
-    current_balance = Column(Integer)
+    account_id: Optional[int] = Field(default=None, primary_key=True)
 
-    transactions = relationship("Transaction", back_populates="account")
+    transactions: List["Transaction"] = Relationship(back_populates="account")
 
 
-class Transaction(Base):
+class TransactionType(str, Enum):
+    credit = "credit"
+    debit = "debit"
+
+
+class TransactionBase(SQLModel):
+    date: datetime
+    account_id: int = Field(default=None, foreign_key="accounts.account_id")
+    transaction_type: TransactionType
+    amount: int
+    comment: Optional[str]
+
+
+class TransactionCreate(TransactionBase):
+    pass
+
+
+class Transaction(TransactionBase, table=True):
+
     __tablename__ = "transactions"
 
-    transaction_id = Column(Integer, primary_key=True, autoincrement=True)
-    date = Column(String)
-    account_id = Column(Integer, ForeignKey("accounts.account_id"))
-    comment = Column(String)
-    transaction_type = Column(String)
-    amount = Column(Integer)
+    transaction_id: Optional[int] = Field(default=None, primary_key=True)
 
-    account = relationship("Account", back_populates="transactions")
+    account: Optional[Account] = Relationship(back_populates="transactions")

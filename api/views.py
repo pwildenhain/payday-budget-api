@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from db import schemas
+from db import models
 from api.api import get_accounts
 
 templates = Jinja2Templates(directory="templates")
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/ui")
 
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
-def root(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
+def root(request: Request, accounts: List[models.Account] = Depends(get_accounts)):
     return templates.TemplateResponse(
         "index.html", {"request": request, "accounts": accounts}
     )
@@ -21,7 +21,7 @@ def root(request: Request, accounts: List[schemas.Account] = Depends(get_account
 
 @router.get("/add-transaction", response_class=HTMLResponse, include_in_schema=False)
 def add_transaction_view(
-    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+    request: Request, accounts: List[models.Account] = Depends(get_accounts)
 ):
     return templates.TemplateResponse(
         "add_transaction.html", {"request": request, "accounts": accounts}
@@ -30,7 +30,7 @@ def add_transaction_view(
 
 @router.get("/add-income", response_class=HTMLResponse, include_in_schema=False)
 def add_income_view(
-    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+    request: Request, accounts: List[models.Account] = Depends(get_accounts)
 ):
     return templates.TemplateResponse(
         "add_income.html", {"request": request, "accounts": accounts}
@@ -39,7 +39,7 @@ def add_income_view(
 
 @router.get("/transfer", response_class=HTMLResponse, include_in_schema=False)
 def transfer_view(
-    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+    request: Request, accounts: List[models.Account] = Depends(get_accounts)
 ):
     return templates.TemplateResponse(
         "transfer.html", {"request": request, "accounts": accounts}
@@ -55,7 +55,7 @@ def record_payday_view(request: Request):
     "/modify/update-account", response_class=HTMLResponse, include_in_schema=False
 )
 def update_account_view(
-    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+    request: Request, accounts: List[models.Account] = Depends(get_accounts)
 ):
     return templates.TemplateResponse(
         "update_account.html", {"request": request, "accounts": accounts}
@@ -73,7 +73,7 @@ def create_account_view(request: Request):
     "/modify/delete-account", response_class=HTMLResponse, include_in_schema=False
 )
 def delete_account_view(
-    request: Request, accounts: List[schemas.Account] = Depends(get_accounts)
+    request: Request, accounts: List[models.Account] = Depends(get_accounts)
 ):
     return templates.TemplateResponse(
         "delete_account.html", {"request": request, "accounts": accounts}

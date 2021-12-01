@@ -1,9 +1,8 @@
-from db.database import SessionLocal
+from sqlmodel import Session
+
+from db.database import engine
 
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    with Session(engine) as session:
+        yield session

@@ -1,7 +1,6 @@
-from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import desc
+from sqlmodel import Session, desc
 
-from db import models, schemas
+from db import models
 
 import logging
 
@@ -22,7 +21,7 @@ def get_account(db: Session, account_id: int):
     return db.query(models.Account).get(account_id)
 
 
-def create_account(db: Session, account: schemas.AccountCreate):
+def create_account(db: Session, account: models.AccountCreate):
     db_account = models.Account(**account.dict())
     db.add(db_account)
     db.commit()
@@ -30,7 +29,7 @@ def create_account(db: Session, account: schemas.AccountCreate):
     return db_account
 
 
-def create_transaction(db: Session, transaction: schemas.TransactionCreate):
+def create_transaction(db: Session, transaction: models.TransactionCreate):
     db_transaction = models.Transaction(**transaction.dict())
     db.add(db_transaction)
     db.commit()
@@ -40,7 +39,7 @@ def create_transaction(db: Session, transaction: schemas.TransactionCreate):
     return db_transaction
 
 
-def update_account(db: Session, account_id: int, account: schemas.AccountUpdate):
+def update_account(db: Session, account_id: int, account: models.AccountUpdate):
     (
         db.query(models.Account)
         .filter(models.Account.account_id == account_id)
@@ -66,7 +65,7 @@ def update_account_balance(db: Session, transaction: models.Transaction):
     return db_account
 
 
-def delete_account(db: Session, account: schemas.AccountDelete):
+def delete_account(db: Session, account: models.AccountDelete):
     db_account = get_account(db, account.account_id)
     db.delete(db_account)
     db.commit()

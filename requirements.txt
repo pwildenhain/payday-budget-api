@@ -1,7 +1,7 @@
 fastapi[all]
+sqlmodel
 jinja2
 aiofiles
-sqlalchemy
 alembic
 python-multipart
 black

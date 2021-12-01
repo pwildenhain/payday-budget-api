@@ -6,7 +6,7 @@ from starlette.responses import RedirectResponse
 from starlette.status import HTTP_303_SEE_OTHER
 from sqlalchemy.orm import Session
 
-from db import schemas
+from db import models
 from api.dependencies import get_db
 from api.api import (
     add_account,
@@ -33,7 +33,7 @@ def add_transaction_form(
     db: Session = Depends(get_db),
 ):
 
-    transaction = schemas.TransactionCreate(
+    transaction = models.TransactionCreate(
         account_id=account_id,
         amount=amount,
         comment=comment,
@@ -56,7 +56,7 @@ def add_income_form(
     transaction_type: Optional[str] = Form("credit"),
     db: Session = Depends(get_db),
 ):
-    transaction = schemas.TransactionCreate(
+    transaction = models.TransactionCreate(
         account_id=account_id,
         amount=amount,
         comment=comment,
@@ -76,7 +76,7 @@ def transfer_form(
     amount: int = Form(...),
     db: Session = Depends(get_db),
 ):
-    account_withdraw_transaction = schemas.TransactionCreate(
+    account_withdraw_transaction = models.TransactionCreate(
         account_id=from_account_id,
         amount=amount,
         comment=f"Transfer to {from_account_id}",
@@ -86,7 +86,7 @@ def transfer_form(
 
     add_transaction(account_withdraw_transaction, db)
 
-    account_deposit_transaction = schemas.TransactionCreate(
+    account_deposit_transaction = models.TransactionCreate(
         account_id=to_account_id,
         amount=amount,
         comment=f"Transfer from {to_account_id}",
@@ -100,7 +100,7 @@ def transfer_form(
 
 
 @router.post("/form/payday", response_class=RedirectResponse, include_in_schema=False)
-def payday_form(payday: List[schemas.Transaction] = Depends(record_payday)):
+def payday_form(payday: List[models.Transaction] = Depends(record_payday)):
     # By adding the record_payday dependency, we're implicitly recording a payday
     return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
 
@@ -120,7 +120,7 @@ def update_account_form(
 
     update_account(
         account_id,
-        schemas.AccountUpdate(
+        models.AccountUpdate(
             name=account.name,
             category=account.category,
             budgeted_amount=account.budgeted_amount,
@@ -151,7 +151,7 @@ def create_account_form(
     # there is def a more elegant solution than this
     if account_name not in account_names:
         add_account(
-            schemas.AccountCreate(
+            models.AccountCreate(
                 name=account_name,
                 category=account_category,
                 budgeted_amount=budgeted_amount,
@@ -174,7 +174,7 @@ def delete_account_form(
 ):
 
     delete_account(
-        schemas.AccountDelete(account_id=account_id),
+        models.AccountDelete(account_id=account_id),
         db,
     )
 
