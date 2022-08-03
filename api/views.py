@@ -14,8 +14,17 @@ router = APIRouter(prefix="/ui")
 
 @router.get("/", response_class=HTMLResponse, include_in_schema=False)
 def root(request: Request, accounts: List[schemas.Account] = Depends(get_accounts)):
+    budget_total = sum([account.budgeted_amount for account in accounts])
+    balance_total = sum([account.current_balance for account in accounts])
+
     return templates.TemplateResponse(
-        "index.html", {"request": request, "accounts": accounts}
+        "index.html",
+        {
+            "request": request,
+            "accounts": accounts,
+            "budget_total": budget_total,
+            "balance_total": balance_total,
+        },
     )
 
 
