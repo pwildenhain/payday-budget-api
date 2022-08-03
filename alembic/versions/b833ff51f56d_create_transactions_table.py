@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'b833ff51f56d'
-down_revision = '68e8af48f08c'
+revision = "b833ff51f56d"
+down_revision = "68e8af48f08c"
 branch_labels = None
 depends_on = None
 
@@ -24,7 +24,7 @@ def upgrade():
         sa.Column("account_id", sa.Integer, sa.ForeignKey("accounts.account_id")),
         sa.Column("comment", sa.String),
         sa.Column("transaction_type", sa.String),
-        sa.Column("amount", sa.Integer)
+        sa.Column("amount", sa.Integer),
     )
 
 

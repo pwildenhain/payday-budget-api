@@ -23,6 +23,7 @@ class TransactionCreate(TransactionBase):
 
 class Transaction(TransactionBase):
     transaction_id: int
+
     class Config:
         orm_mode = True
 
