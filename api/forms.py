@@ -66,7 +66,7 @@ def add_income_form(
 
     add_transaction(transaction, db)
 
-    return RedirectResponse(url="/ui", status_code=HTTP_303_SEE_OTHER)
+    return RedirectResponse(url="/ui/add-income", status_code=HTTP_303_SEE_OTHER)
 
 
 @router.post("/form/transfer", response_class=RedirectResponse, include_in_schema=False)
