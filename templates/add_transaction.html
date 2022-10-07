@@ -7,6 +7,9 @@
   {% block endpoint %}
   <form action="{{ url_for('add_transaction_form') }}" method="post" class="form-account">
   {% endblock endpoint %}
+    {% block page_title %}
+    <h3>Add Transaction</h3>
+    {% endblock page_title %}
         <!-- Grid row -->
         <div class="form-row">
           <!-- Grid column -->
